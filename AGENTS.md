@@ -1,25 +1,25 @@
 # AGENTS.md
 
 ## Mission
-本仓库的当前最高优先级是在 **2026-07-15 Demo 前**，用 Codex CLI 自主实现一个可本地运行、可重复演示的 XERP 客户情报平台纵向切片。
+本仓库已在提交 `c68d3db` 完成 2026-07-15 离线 Demo。当前最高优先级是按 Demo 后计划，用 Codex CLI 将该纵向切片持续演进为可接入真实飞书、可供 3—5 个客户试运行的轻量 XERP MVP。
 
-不要把本次任务理解为一次架构讨论或继续写规划文档。后续 Codex 的默认动作是：**读取计划 → 实现代码 → 运行测试 → 修复问题 → 更新进度 → 继续下一阶段**。
+后续 Codex 的默认动作是：**读取 active plan → 检查基线 → 实现第一个未完成 P0 工作包 → 测试和修复 → 更新 planning 文件 → 创建本地 checkpoint → 继续**。不要停在重复分析或只给建议。
 
 ## Required Reading Order
-开始任何实现前必须按顺序读取：
+开始任何实现前按顺序读取：
 
-1. `07-2026-07-15-CodexCLI自主开发Demo计划.md`
-2. `.planning/demo-2026-07-15/task_plan.md`
-3. `.planning/demo-2026-07-15/findings.md`
-4. `.planning/demo-2026-07-15/progress.md`
-5. 与当前任务直接相关的原有 `00`—`06` 文档
+1. `08-Demo后CodexCLI持续开发计划.md`
+2. `.planning/.active_plan` 指向目录中的 `task_plan.md`
+3. 同目录 `findings.md`
+4. 同目录 `progress.md`
+5. 与当前工作包直接相关的 `00`—`06` 产品/领域文档
 
-如果文档发生冲突，以前四项为准；原有路线只提供领域口径，不能用来扩大明日 Demo 范围。
+`07-2026-07-15-CodexCLI自主开发Demo计划.md` 和 `.planning/demo-2026-07-15/` 是已完成历史记录，不再作为当前执行计划，但不得删除。
+
+如果文档冲突，以本文件、`08`、当前 active task plan 为准。
 
 ## Codebase Knowledge Graph
-本项目使用 codebase-memory-mcp 维护代码知识图谱。代码发现必须优先使用 MCP 图工具，而不是 grep/glob/file-search。
-
-优先级：
+本项目使用 codebase-memory-mcp。代码发现优先级：
 
 1. `search_graph`
 2. `trace_path`
@@ -27,119 +27,83 @@
 4. `query_graph`
 5. `get_architecture`
 
-如果项目未索引，先运行 `index_repository`。只有搜索字符串、配置和非代码文件，或图工具结果不足时，才退回 grep/glob。
+如果项目未索引，先使用 `index_repository`。只有搜索字符串/配置/非代码文件，图工具不可用，或图结果不足时，才退回 grep/glob/本地文件搜索；必须在 findings/progress 记录回退原因。
 
 ## Autonomous Execution Policy
-- 不要停在“建议”“方案”“下一步可以……”；直接实施下一个未完成 Phase。
-- 除非出现无法本地替代的硬阻塞，不要向用户提问。
-- 飞书凭据、管理员授权、网络 API 不可用时，立即使用本地 Adapter/Fake，不等待。
-- 每个 Phase 必须完成其 Exit Gate 后才能进入下一 Phase。
-- 每完成一个 Phase，更新 `task_plan.md` 的状态和 `progress.md` 的动作、文件、测试结果。
-- 每次上下文恢复，先做 5-Question Reboot Check，再继续第一个未完成任务。
-- 失败命令不得原样无限重试；记录错误，改变方法。
-- 优先保持应用可启动、测试可过、Demo 可重复；不得为“未来扩展”牺牲明日交付。
+- 从 active task plan 的第一个未完成 P0 工作包继续，不重新规划已完成内容。
+- 每个 Sprint 必须完成 Exit Gate 后才能进入下一 Sprint。
+- 外部凭据或管理员授权不可用时，立即用 Port + Fake/Mock + 脱敏 fixture + contract test 继续。
+- 未完成真实沙箱验证时，标记 `external validation pending`，不得虚报完成。
+- 每完成工作包，更新 task plan、findings（如有新决定）和 progress。
+- 每次恢复先做 5-Question Reboot Check：目标、当前工作包、最近完成、测试/阻塞、下一最小动作。
+- 失败命令不得原样无限重试；记录错误并改变方法。
+- 未经用户明确要求不得 push。
 
-## Demo Scope Guard
-### P0
-- Python 3.12 + FastAPI + uv
-- SQLite 本地事实库
-- 单页 `/demo` 控制台
-- 发材料、报进展、问客户
-- 变更提案确认后写入
-- 权限拒绝、证据引用、审计记录
-- 经营概览、Demo 重置、测试、smoke script、Runbook
+## Non-Negotiable Invariants
+- 默认无飞书凭据、无 OpenAI Key、断网时应用仍可启动。
+- 永久保留 SQLite、`DemoExtractor`、`FakeFeishuEventGateway`、`/demo` 和 smoke test。
+- 每个业务读写必须携带并校验 `customer_id`、`user_id`。
+- 真实飞书身份先映射到内部身份，客户端不能自报任意内部用户绕过权限。
+- 未确认提案不得写入正式事实。
+- 正式写入必须经过 `ProposalEngine` 或等价事务边界。
+- 冲突、缺失字段、证据、原始输入、创建人和确认人必须可追溯。
+- 事件、卡片回调、确认、外部写入和后台任务必须幂等。
+- 原始文件先保全，再解析；解析失败不得伪造成功。
+- 默认测试不得调用真实飞书/模型或依赖开发者本机 `.env`。
 
-### P1 only after all P0 gates pass
-- 最小真实飞书适配
-- OpenAI 结构化抽取提供者
-- Dockerfile
-- 更丰富的周报卡片
+## Technical Direction
+- 应用根目录为 `agent-backend/`，Python 3.12 + FastAPI + uv。
+- 采用 Ports/Adapters 小步演进，不做整体重写。
+- 应用服务不能直接依赖飞书 SDK、OpenAI SDK 或具体数据库。
+- Sprint 0 先类型化端口、拆分仓储、建立 contract tests 和 composition root。
+- SQLite 是本地/CI/离线回退；Feishu Base 是真实试运行适配器。
+- Wiki 是人读展示层，不是唯一事实库。
+- 模型输出只能生成候选提案，不得绕过确认直接写入事实。
+- MVP 未出现测量瓶颈前，不引入 PostgreSQL、Redis、Kafka、Temporal、RAGFlow、向量数据库或独立前端重写。
 
-### Explicitly out of scope for 2026-07-15
-- PostgreSQL、Redis、Kafka、Temporal、RAGFlow、向量数据库
-- OCR 和复杂 PDF/PPT/Excel 解析
-- Wiki 自动建页、云盘下载、12 张 Base 表全量同步
-- 生产部署、完整 RBAC/SSO、多租户、200 客户迁移
-- 独立 React/Vue 前端工程
+## Configuration and Secrets
+- 配置从环境变量或未提交的 `.env` 读取。
+- `.env.example` 只能含占位符。
+- 真实密钥不得出现在源码、测试、日志、Markdown、截图、commit 或聊天输出中。
+- OpenAI-compatible 配置使用 `OPENAI_API_KEY`、`OPENAI_BASE_URL`、`OPENAI_MODEL`；Provider 必须独立于应用服务。
+- 飞书和模型真实集成必须显式启用；默认全部指向离线安全适配器。
 
-## Technical Decisions
-- 使用 `agent-backend/` 作为应用根目录。
-- 使用 uv 固定 Python 3.12；不要依赖系统默认 Python 3.9。
-- Demo 默认不能依赖任何密钥、外网或运行时大模型。
-- 采用端口/适配器边界：本地 SQLite 为默认实现，Feishu Base 为可选实现。
-- 默认使用确定性 `DemoExtractor`，保证固定样例稳定；模型提供者只做可选增强。
-- 正式写入必须经过 ProposalEngine 和确认动作。
-- 每个业务请求必须带 `customer_id`、`user_id`。
-- 使用应用服务封装业务事务，不允许路由直接拼接数据库写入。
-- Demo Console 使用服务端静态 HTML/CSS/JS，不建立额外 Node 构建链。
+## Test Gates
+每个 Sprint Exit Gate 至少运行：
 
-## Optional LLM API Configuration
-项目已经约定通过 OpenAI 兼容接口调用可选的大模型能力。实现模型 Provider 时必须遵守：
-
-- 从项目根目录的 `.env` 或进程环境变量读取配置，禁止在源码、测试、日志、文档或示例数据中写入真实 Key。
-- 使用以下统一变量名：
-  - `OPENAI_API_KEY`：API 密钥。
-  - `OPENAI_BASE_URL`：OpenAI 兼容接口地址；当前本地配置使用 `https://api.xairouter.com/v1`。
-  - `OPENAI_MODEL`：模型名称；当前本地配置使用 `gpt-5.5`。
-- Python 调用优先使用 OpenAI SDK，并显式传入 `api_key`、`base_url` 和 `model`：
-
-```python
-import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ["OPENAI_API_KEY"],
-    base_url=os.environ["OPENAI_BASE_URL"],
-)
-
-response = client.chat.completions.create(
-    model=os.environ["OPENAI_MODEL"],
-    messages=[{"role": "user", "content": "你好"}],
-)
+```bash
+cd agent-backend
+uv sync
+uv run ruff check .
+uv run pytest
+uv run python scripts/smoke_demo.py
 ```
 
-- 应用启动时如果未配置 Key，必须自动回退到 `DemoExtractor`，不得影响无密钥 Demo。
-- API 调用应放在独立 Provider/Adapter 中，业务服务不得直接依赖 OpenAI SDK。
-- 测试必须 Mock/Fake 模型 Provider，不得真实消耗 API。
-- `.env`、`.env.*` 必须保持 Git 忽略；可提交的配置说明只写入 `.env.example`，其中只能使用占位符。
-- `OPENAI_BASE_URL` 指向第三方兼容服务时，请求内容会经过该服务；不得发送不必要的客户敏感信息。
-
-## Required Public Behaviors
-实现应至少暴露等价行为（路径可微调，但 README 和 smoke test 必须一致）：
-
-- `GET /health`
-- `GET /demo`
-- `POST /api/demo/reset`
-- `POST /api/intake/material`
-- `POST /api/intake/progress`
-- `POST /api/proposals/{proposal_id}/confirm`
-- `POST /api/questions`
-- `GET /api/customers/{customer_id}/snapshot`
-- `GET /api/dashboard`
-
-## Testing Rules
-- 优先在最高可观察边界测试外部行为，API 测试优于实现细节测试。
-- 每实现一个闭环，立即运行对应测试，不等到最后。
-- 最终至少运行：
-  - `uv run ruff check .`
-  - `uv run pytest`
-  - `uv run python scripts/smoke_demo.py`
-- 测试不得依赖外网、真实飞书或 OpenAI API。
-- 必测：确认前不写正式表、确认后事务更新、跨客户/未授权访问拒绝、冲突不静默覆盖、问答含来源与缺失信息、重置可重复。
+先运行工作包相关测试，再运行完整 Gate。不得通过删除权限、幂等、确认或审计逻辑让测试变绿。
 
 ## Git Safety
-- 不得 push。
-- 不得 force push、reset --hard、clean -fd 或重写历史。
-- 不得删除原有规划文档。
-- 可以在所有 P0 Gate 通过后创建本地 checkpoint commit；提交信息应明确说明 Demo 状态。
-- 保留用户已有改动，不得为了方便还原非本次创建的内容。
+开始任务前运行：
 
-## Definition of Done
-只有在以下条件全部满足时才能宣布完成：
+```bash
+git status --short --branch
+git log -5 --oneline
+```
 
-1. `.planning/demo-2026-07-15/task_plan.md` 的 Phase 1—5 均为 complete。
-2. P0 Acceptance Criteria 全部通过并记录到 `progress.md`。
-3. `scripts/run_demo.sh` 可启动应用，`scripts/smoke_demo.py` 可重复通过。
-4. Demo Runbook 按顺序完成两次彩排。
-5. 无密钥、无网络条件下仍能演示核心路径。
-6. 已知限制和 P1 项清楚记录，不把未实现能力表述为已完成。
+- 不覆盖用户未提交修改。
+- 不使用 `git reset --hard`、强制 push、历史重写或删除用户分支。
+- 一个工作包形成 1—3 个小提交；Sprint Exit Gate 后记录 checkpoint SHA。
+- 除非用户明确要求，否则只创建本地提交，不 push。
+
+## Stop / Escalate
+仅在以下硬阻塞停止并向用户说明：
+
+- 将修改/删除真实 Base、Wiki、Drive 数据或生产权限。
+- 将向真实客户发送消息、周报或提醒。
+- 需要管理员审批、真实密钥、部署账户或付费资源。
+- 怀疑密钥泄漏、越权或跨客户数据泄漏。
+- 数据迁移可能不可逆。
+- 用户改动冲突且无法安全隔离。
+- 三种合理方案后仍不能推进。
+- 重大产品歧义会造成不可逆数据模型或外部副作用。
+
+停止报告必须包含：已完成、准确失败、已尝试方案、风险、最小所需批准/信息、仍可继续的无阻塞工作。
