@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>XERP 客户情报控制台</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/demo/assets/styles.css">
+</head>
+<body>
+  <div class="signal-rail" aria-hidden="true">
+    <span>XERP</span><i></i><span>CLIENT INTELLIGENCE</span>
+  </div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">LOCAL OPERATIONS DOSSIER · 2026-07-15</p>
+        <h1>XERP 客户情报控制台</h1>
+        <p class="lede">所有事实先形成提案。只有人工确认，才进入客户事实库。</p>
+      </div>
+      <div class="top-actions">
+        <label>
+          <span>演示身份</span>
+          <select id="user-id">
+            <option value="u-demo-owner">u-demo-owner · 已授权</option>
+            <option value="u-outsider">u-outsider · 未授权</option>
+          </select>
+        </label>
+        <button id="reset-demo" class="button button-danger" type="button">重置 Demo 数据</button>
+      </div>
+    </header>
+
+    <section class="context-strip" aria-label="当前客户上下文">
+      <div><span>客户编号</span><strong id="customer-id">CUST-DEMO-001</strong></div>
+      <div><span>客户</span><strong>中国星海集团</strong></div>
+      <div><span>运行模式</span><strong class="status-dot">离线确定性 Demo</strong></div>
+      <button id="refresh-all" class="text-button" type="button">刷新全局视图 ↗</button>
+    </section>
+
+    <section class="kpi-grid" aria-label="经营概览">
+      <article><span>活跃商机</span><strong id="kpi-opportunities">—</strong><small>confirmed pipeline</small></article>
+      <article><span>金额线索</span><strong id="kpi-amount">—</strong><small>single-source CNY</small></article>
+      <article><span>待办行动</span><strong id="kpi-actions">—</strong><small id="kpi-overdue">逾期 —</small></article>
+      <article><span>高风险</span><strong id="kpi-risks">—</strong><small>open / high</small></article>
+      <article class="kpi-accent"><span>待确认提案</span><strong id="kpi-pending">—</strong><small>human gate</small></article>
+    </section>
+
+    <main class="workspace">
+      <section class="action-panel panel">
+        <div class="panel-heading">
+          <div><span class="section-no">01</span><h2>现场输入</h2></div>
+          <p>发材料、报进展或问客户</p>
+        </div>
+
+        <form id="progress-form" class="operation-card">
+          <div class="operation-title"><span>报进展</span><b>PROGRESS</b></div>
+          <label for="progress-text">拜访或沟通记录</label>
+          <textarea id="progress-text" rows="5">今天拜访了李总。客户希望财务和采购优先，预算约一亿元，月底提交整体方案。</textarea>
+          <button class="button button-primary" type="submit">生成商务进展提案</button>
+        </form>
+
+        <form id="material-form" class="operation-card">
+          <div class="operation-title"><span>发材料</span><b>MATERIAL</b></div>
+          <div class="field-grid">
+            <label>文件名<input id="material-filename" value="集团数字化规划.pdf"></label>
+            <label>资料说明<input id="material-description" value="这是今天客户给的集团数字化规划。"></label>
+          </div>
+          <button class="button button-secondary" type="submit">生成资料归档提案</button>
+        </form>
+
+        <form id="question-form" class="operation-card operation-card-dark">
+          <div class="operation-title"><span>问客户</span><b>ASK</b></div>
+          <label for="question-text">业务问题</label>
+          <textarea id="question-text" rows="3">这个客户目前最关键的三个突破口是什么？</textarea>
+          <button class="button button-light" type="submit">生成有证据的回答</button>
+        </form>
+      </section>
+
+      <section class="result-panel panel">
+        <div class="panel-heading">
+          <div><span class="section-no">02</span><h2>提案与回答</h2></div>
+          <p id="result-state">等待输入</p>
+        </div>
+        <div id="result-view" class="result-view empty-state">
+          <div class="radar-mark" aria-hidden="true"></div>
+          <h3>尚未生成结果</h3>
+          <p>从左侧提交一个场景。提案会显示变更、冲突与缺失信息；确认前不会写入正式数据。</p>
+        </div>
+      </section>
+    </main>
+
+    <section class="evidence-grid">
+      <article class="panel summary-panel">
+        <div class="panel-heading compact">
+          <div><span class="section-no">03</span><h2>经营摘要</h2></div>
+        </div>
+        <p id="weekly-summary" class="weekly-summary">正在加载经营摘要…</p>
+        <div id="pending-list" class="record-list"></div>
+      </article>
+      <article class="panel snapshot-panel">
+        <div class="panel-heading compact">
+          <div><span class="section-no">04</span><h2>已确认事实</h2></div>
+        </div>
+        <div id="snapshot-view" class="snapshot-columns"></div>
+      </article>
+      <article class="panel audit-panel">
+        <div class="panel-heading compact">
+          <div><span class="section-no">05</span><h2>审计轨迹</h2></div>
+        </div>
+        <div id="audit-view" class="record-list"></div>
+      </article>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/demo/assets/app.js" defer></script>
+</body>
+</html>

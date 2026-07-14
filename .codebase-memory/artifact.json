@@ -1,11 +1,11 @@
 {
     "schema_version": 1,
-    "commit": "cc1cd44d13f1d69cae94e454aaad8135be107ce5",
-    "indexed_at": "2026-07-14T11:48:01Z",
+    "commit": "4f474dda0520cce417da3377d36a349e488928d8",
+    "indexed_at": "2026-07-14T13:39:43Z",
     "project": "Users-suoqiang-Documents-MiniAiCrm",
-    "nodes": 328,
-    "edges": 315,
-    "original_size": 1900544,
-    "compressed_size": 44340,
+    "nodes": 688,
+    "edges": 1064,
+    "original_size": 2949120,
+    "compressed_size": 318045,
     "compression_level": 3
 }

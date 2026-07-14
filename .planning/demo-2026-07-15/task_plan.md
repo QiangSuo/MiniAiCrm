@@ -4,7 +4,7 @@
 在 2026-07-15 Demo 前，由 Codex CLI 自主实现并验证一个本地可运行的 XERP 客户情报平台纵向切片，稳定演示“发材料、报进展、问客户、确认写入、经营概览”五个动作；没有飞书凭据时仍可完整演示，有凭据时可追加真实飞书适配。
 
 ## Current Phase
-Phase 1
+Phase 5 — complete
 
 ## Source of Truth
 1. `AGENTS.md`
@@ -24,48 +24,48 @@ Phase 1
 - **Status:** complete
 
 ### Phase 1: 工程骨架与可启动服务
-- [ ] 创建 `agent-backend/` Python 3.12 + FastAPI + uv 工程
-- [ ] 建立配置、结构化日志、领域模型、应用服务、仓储接口
-- [ ] 实现 SQLite DemoRepository 与种子数据
-- [ ] 实现 `/health`、`/demo`、`/api/demo/reset`
-- [ ] 添加最小单元测试并通过
-- **Status:** pending
+- [x] 创建 `agent-backend/` Python 3.12 + FastAPI + uv 工程
+- [x] 建立配置、结构化日志、领域模型、应用服务、仓储接口
+- [x] 实现 SQLite DemoRepository 与种子数据
+- [x] 实现 `/health`、`/demo`、`/api/demo/reset`
+- [x] 添加最小单元测试并通过
+- **Status:** complete
 - **Exit Gate:** 全新环境执行 `uv sync && uv run pytest` 成功，`/health` 返回 200，`/demo` 可打开
 
 ### Phase 2: 三个核心闭环
-- [ ] “发材料”生成资料归档提案，确认后写入资料证据
-- [ ] “报进展”生成接触、商机、行动提案，展示冲突并确认写入
-- [ ] “问客户”基于当前客户数据回答，区分事实、推断、建议并附来源
-- [ ] 所有读写带 `customer_id`、`user_id` 并经过 PermissionGuard
-- [ ] 所有正式写入通过 ProposalEngine，禁止静默直写
-- **Status:** pending
+- [x] “发材料”生成资料归档提案，确认后写入资料证据
+- [x] “报进展”生成接触、商机、行动提案，展示冲突并确认写入
+- [x] “问客户”基于当前客户数据回答，区分事实、推断、建议并附来源
+- [x] 所有读写带 `customer_id`、`user_id` 并经过 PermissionGuard
+- [x] 所有正式写入通过 ProposalEngine，禁止静默直写
+- **Status:** complete
 - **Exit Gate:** 三个闭环 API 测试全部通过；未授权用户返回 403；确认前正式表不变化，确认后事务性更新
 
 ### Phase 3: Demo 控制台与经营概览
-- [ ] 制作单页 Demo Console，不引入独立前端构建链
-- [ ] 支持选择预设场景、提交、查看提案、确认、查看问答和来源
-- [ ] 实现经营概览：客户、活跃商机、金额、逾期行动、高风险、待确认提案
-- [ ] 实现周报预览或经营摘要，作为阶段四能力的视觉占位
-- [ ] 增加一键重置 Demo 数据
-- **Status:** pending
+- [x] 制作单页 Demo Console，不引入独立前端构建链
+- [x] 支持选择预设场景、提交、查看提案、确认、查看问答和来源
+- [x] 实现经营概览：客户、活跃商机、金额、逾期行动、高风险、待确认提案
+- [x] 实现周报预览或经营摘要，作为阶段四能力的视觉占位
+- [x] 增加一键重置 Demo 数据
+- **Status:** complete
 - **Exit Gate:** 浏览器内按既定脚本可在 5 分钟内无命令行改数据完成全流程
 
 ### Phase 4: 稳定性、脚本与可选飞书适配
-- [ ] 添加 `scripts/bootstrap.sh`、`scripts/run_demo.sh`、`scripts/smoke_demo.py`
-- [ ] 增加 webhook replay 端点或 FeishuEventGateway 假实现
-- [ ] 若真实飞书凭据齐全且核心 Gate 已通过，再实现最小真实事件/回复适配
-- [ ] 外部模型不可用时自动使用确定性 DemoExtractor，不阻断 Demo
-- [ ] 完成错误提示、审计日志、README、`.env.example`
-- **Status:** pending
+- [x] 添加 `scripts/bootstrap.sh`、`scripts/run_demo.sh`、`scripts/smoke_demo.py`
+- [x] 增加 webhook replay 端点或 FeishuEventGateway 假实现
+- [x] 若真实飞书凭据齐全且核心 Gate 已通过，再实现最小真实事件/回复适配（P0 使用 Fake，未扩大到 P1）
+- [x] 外部模型不可用时自动使用确定性 DemoExtractor，不阻断 Demo
+- [x] 完成错误提示、审计日志、README、`.env.example`
+- **Status:** complete
 - **Exit Gate:** 断网且无密钥时 smoke test 通过；外部凭据缺失不会导致应用启动失败
 
 ### Phase 5: 最终验收与交付
-- [ ] 运行格式检查、静态检查、完整测试和 smoke test
-- [ ] 按 Demo Runbook 完整彩排至少两次
-- [ ] 记录已知限制、回退方案和现场操作顺序
-- [ ] 更新 `progress.md`、测试结果和最终状态
-- [ ] 生成本地 checkpoint commit；禁止 push
-- **Status:** pending
+- [x] 运行格式检查、静态检查、完整测试和 smoke test
+- [x] 按 Demo Runbook 完整彩排至少两次
+- [x] 记录已知限制、回退方案和现场操作顺序
+- [x] 更新 `progress.md`、测试结果和最终状态
+- [x] 生成本地 checkpoint commit；禁止 push
+- **Status:** complete
 - **Exit Gate:** 所有 P0 验收项通过，无未解释的测试失败，Demo 从重置到结束可重复执行
 
 ## P0 Acceptance Criteria
@@ -124,6 +124,13 @@ Phase 1
 | Error | Attempt | Resolution |
 |-------|---------|------------|
 | `codex doctor` provider route probe 超时 | 1 | 开工前再次运行；若 Codex 会话本身可用则继续，运行时产品不依赖外部模型 |
+| 恢复会话时从 `agent-backend/` 追加根目录进度文件失败 | 1 | 切回仓库根目录写入；测试命令仍在正确目录成功执行 |
+| Playwright CLI 使用了不存在的 `select-option` 命令 | 1 | 根据 CLI 输出改用 `select <target> <value>`，不重复失败命令 |
+| Phase 4 首次路由生成遗漏 `FeishuReplayEvent` import | 1 | 读取实际 routes import 形式并改为显式多行导入 |
+| health 新增 provider 状态后旧测试严格字典断言失败 | 1 | 更新公共 health 契约期望，保留新增字段的显式验证 |
+| `uv run python scripts/smoke_demo.py` 无法导入 `app` | 1 | 在脚本启动时显式加入项目根目录，保持用户要求的直接执行命令 |
+| Smoke 修复导入后 Ruff 检出 import 顺序 | 1 | 使用 Ruff 自动整理 import block |
+| Smoke 使用了错误的 dashboard 金额字段名 | 1 | 依据公共 dashboard 测试改为 `total_amount_cny` |
 
 ## Notes
 - Codex 每完成一个 Phase，必须立即更新本文件和 `progress.md`。

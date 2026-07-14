@@ -11,3 +11,6 @@ htmlcov/
 agent-backend/data/*.db
 agent-backend/data/*.db-*
 .planning/*/last-message.md
+.playwright-mcp/
+agent-backend/.playwright-cli/
+agent-backend/output/playwright/
