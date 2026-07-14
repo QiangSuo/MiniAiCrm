@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+agent-backend/data/*.db
+agent-backend/data/*.db-*
+.planning/*/last-message.md

@@ -8,7 +8,14 @@
 
 ## 2. 建议周期
 
-1-2 天。
+常规路线仍为 1—2 天；针对 **2026-07-15 Demo**，阶段零压缩为 30 分钟以内，只完成以下事项：
+
+- 冻结 P0/P1/不做范围。
+- 确认 Codex CLI、Python 3.12 和 uv 可用。
+- 建立 `AGENTS.md`、`.planning/demo-2026-07-15/` 和自主执行 Prompt。
+- 随即进入代码实施，不再继续扩写规划。
+
+明日紧急路径以 [07-2026-07-15-CodexCLI自主开发Demo计划.md](./07-2026-07-15-CodexCLI自主开发Demo计划.md) 为准。
 
 ## 3. 分工方式
 
@@ -176,7 +183,36 @@ Codex 单人开发建议按“每天一个可验收闭环”推进：
 | Day 11-14 | 客户问答闭环 |
 | Day 15-20 | 周报、提醒、试运行修正 |
 
-## 10. 阶段验收标准
+## 10. Codex CLI 自主执行入口
+
+仓库根目录已提供 `PROMPT-CODEX-EXEC-DEMO.md`。推荐在 2026-07-14 晚间执行：
+
+```bash
+cd /Users/suoqiang/Documents/MiniAiCrm
+codex exec \
+  -C . \
+  -s workspace-write \
+  -a never \
+  -o .planning/demo-2026-07-15/last-message.md \
+  - < PROMPT-CODEX-EXEC-DEMO.md
+```
+
+如果单次会话提前结束：
+
+```bash
+codex exec resume --last \
+  "继续执行 AGENTS.md 和 .planning/demo-2026-07-15/task_plan.md，从第一个 pending Phase 开始直接实施、测试、修复并更新进度。"
+```
+
+自主执行时：
+
+- 不等待飞书或 OpenAI 密钥，默认走本地 Adapter。
+- 不使用危险的 sandbox bypass 参数。
+- 不 push，不重写 Git 历史。
+- 每个 Phase 通过 Exit Gate 后才进入下一阶段。
+- P0 全绿前不得实现 P1。
+
+## 11. 阶段验收标准
 
 - 后端项目可以本地启动。
 - 配置项完整。
@@ -186,7 +222,7 @@ Codex 单人开发建议按“每天一个可验收闭环”推进：
 - 第一批开发任务已拆成可执行小任务。
 - 你能清楚判断每个小任务是否完成。
 
-## 11. 阶段风险
+## 12. 阶段风险
 
 | 风险 | 应对 |
 | --- | --- |
